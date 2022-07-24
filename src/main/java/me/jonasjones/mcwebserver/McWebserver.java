@@ -23,11 +23,16 @@ public class McWebserver implements ModInitializer {
 		ModConfigs.registerConfigs();
 
 		LOGGER.info("McWebserver initialized!");
-		LOGGER.info("Starting Webserver...");
 
-		new Thread(() -> {
-			new HTTPServer(new Socket());
-			HTTPServer.main();
-		}).start();
+		if (ModConfigs.ISENABLED) {
+			LOGGER.info("Starting Webserver...");
+
+			new Thread(() -> {
+				new HTTPServer(new Socket());
+				HTTPServer.main();
+			}).start();
+		} else {
+			LOGGER.info("Webserver disabled in the config file.");
+		}
 	}
 }

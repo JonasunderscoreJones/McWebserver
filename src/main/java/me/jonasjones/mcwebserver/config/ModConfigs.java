@@ -35,7 +35,7 @@ public class ModConfigs {
     }
 
     private static void createConfigs() {
-        config.addKeyValuePair(new Pair<>("web.isEnabled", true), "whether or not the webserver should be enabled or not");
+        config.addKeyValuePair(new Pair<>("web.isEnabled", false), "whether or not the webserver should be enabled or not");
         config.addKeyValuePair(new Pair<>("web.port", 8080), "The port of the webserver");
         config.addKeyValuePair(new Pair<>("web.root", "webserver/"), "the root directory of the webserver, starting from the main server directory");
         config.addKeyValuePair(new Pair<>("web.file.root", "index.html"), "the name of the html file for the homepage");
@@ -45,7 +45,7 @@ public class ModConfigs {
     }
 
     private static void assignConfigs() {
-        ISENABLED = CONFIG.getOrDefault("basic.isEnabled", true);
+        ISENABLED = CONFIG.getOrDefault("basic.isEnabled", false);
         WEB_PORT = CONFIG.getOrDefault("web.port", 8080);
         WEB_ROOT = CONFIG.getOrDefault("web.root", "webserver/");
         WEB_FILE_ROOT = CONFIG.getOrDefault("web.file.root", "index.html");
