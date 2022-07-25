@@ -16,7 +16,7 @@ Do **only** put files into your webservers root directory that you want to be ac
 
 ### Setup
 
-1. Head over to [modrinth](https://modrinth.com/mod/mcwebserver) and curseforge (once approved) for now available in this repository's [releases](https://github.com/J-onasJones/McWebserver/releases/latest) and download it into your mods folder.
+1. Head over to [modrinth](https://modrinth.com/mod/mcwebserver) or [curseforge](https://www.curseforge.com/minecraft/mc-mods/mcwebserver) and download the correct version of the mod into your mods folder.
 2. Restart Your Minecraft Server and let the mod create the config file. The webserver will be offline by default.
 3. In the config file, enable the webserver and adjust all settings if needed.
 4. Add the following files to your Webservers root directory:
