@@ -24,7 +24,7 @@ public class McWebserver implements ModInitializer {
 
 		LOGGER.info("McWebserver initialized!");
 
-		if (ModConfigs.ISENABLED) {
+		if (true) {
 			LOGGER.info("Starting Webserver...");
 
 			new Thread(() -> {
