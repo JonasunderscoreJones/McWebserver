@@ -1,6 +1,5 @@
-[23:57:49] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.19 with Fabric Loader 0.14.6
-[23:57:50] [ForkJoinPool-1-worker-1/WARN] (FabricLoader/Metadata) Mod mcwebserver uses the version v0.1.0 which isn't compatible with Loader's extended semantic version format (Could not parse version number component 'v0'!), SemVer is recommended for reliably evaluating dependencies and prioritizing newer version
-[23:57:50] [main/INFO] (FabricLoader) Loading 35 mods:
+[14:51:27] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.19 with Fabric Loader 0.14.6
+[14:51:27] [main/INFO] (FabricLoader) Loading 35 mods:
 	- fabric 0.55.1+1.19
 	- fabric-api-base 0.4.8+e62f51a357
 	- fabric-api-lookup-api-v1 1.6.5+9ff28f4057
@@ -34,56 +33,99 @@
 	- fabric-transitive-access-wideners-v1 1.1.0+9e7660c657
 	- fabricloader 0.14.6
 	- java 17
-	- mcwebserver v0.1.0
+	- mcwebserver 0.1.0
 	- minecraft 1.19
-[23:57:50] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.5 Source=file:/home/jonas_jones/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.11.4+mixin.0.8.5/c1dc27696aa4006e492c2485c9ccbcb26045a971/sponge-mixin-0.11.4+mixin.0.8.5.jar Service=Knot/Fabric Env=SERVER
-[23:57:51] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
-[23:57:51] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_16
-[23:57:51] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_17
-[23:57:54] [main/WARN] (FileUtil) Configuration conflict: there is more than one oshi.properties file on the classpath
-[23:57:54] [main/WARN] (FileUtil) Configuration conflict: there is more than one oshi.architecture.properties file on the classpath
-[23:58:01] [main/INFO] (Minecraft) Building unoptimized datafixer
-[23:58:04] [main/INFO] (mcwebserver - VERBOSE LOGGER) Verbose Logger is now logging.
-[23:58:04] [main/INFO] (mcwebserver - VERBOSE LOGGER) Loaded config file successfully: found 7 overrides and configurations.
-[23:58:04] [main/INFO] (mcwebserver) McWebserver initialized!
-[23:58:04] [main/INFO] (mcwebserver) Starting Webserver...
-[23:58:04] [Thread-1/INFO] (mcwebserver) Server started.
-[23:58:04] [Thread-1/INFO] (mcwebserver - VERBOSE LOGGER) Listening for connections on port : " + PORT + " ...
-[23:58:05] [main/INFO] (Minecraft) Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
-[23:58:11] [main/INFO] (Minecraft) Loaded 7 recipes
-[23:58:11] [main/INFO] (Minecraft) Loaded 1179 advancements
-[23:58:13] [main/INFO] (BiomeModificationImpl) Applied 0 biome modifications to 0 of 63 new biomes in 3.173 ms
-[23:58:13] [Server thread/INFO] (Minecraft) Starting minecraft server version 1.19
-[23:58:13] [Server thread/INFO] (Minecraft) Loading properties
-[23:58:13] [Server thread/INFO] (Minecraft) Default game type: SURVIVAL
-[23:58:13] [Server thread/INFO] (Minecraft) Generating keypair
-[23:58:13] [Server thread/INFO] (Minecraft) Starting Minecraft server on *:25565
-[23:58:13] [Server thread/INFO] (Minecraft) Using epoll channel type
-[23:58:14] [Server thread/INFO] (Minecraft) Preparing level "world"
-[23:58:14] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
-[23:58:21] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
-[23:58:22] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 1%
-[23:58:23] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 7%
-[23:58:23] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 17%
-[23:58:24] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 32%
-[23:58:24] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 45%
-[23:58:25] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 61%
-[23:58:25] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 79%
-[23:58:26] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 93%
-[23:58:26] [Server thread/INFO] (Minecraft) Time elapsed: 11605 ms
-[23:58:26] [Server thread/INFO] (Minecraft) Done (12.077s)! For help, type "help"
+[14:51:28] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.5 Source=file:/home/jonas_jones/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.11.4+mixin.0.8.5/c1dc27696aa4006e492c2485c9ccbcb26045a971/sponge-mixin-0.11.4+mixin.0.8.5.jar Service=Knot/Fabric Env=SERVER
+[14:51:28] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
+[14:51:28] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_16
+[14:51:28] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_17
+[14:51:30] [main/WARN] (FileUtil) Configuration conflict: there is more than one oshi.properties file on the classpath
+[14:51:30] [main/WARN] (FileUtil) Configuration conflict: there is more than one oshi.architecture.properties file on the classpath
+[14:51:36] [main/INFO] (Minecraft) Building unoptimized datafixer
+[14:51:39] [main/INFO] (mcwebserver - VERBOSE LOGGER) Verbose Logger is now logging.
+[14:51:39] [main/INFO] (mcwebserver - VERBOSE LOGGER) Loaded config file successfully: found 7 overrides and configurations.
+[14:51:39] [main/INFO] (mcwebserver) McWebserver initialized!
+[14:51:39] [main/INFO] (mcwebserver) Webserver disabled in the config file.
+[14:51:39] [main/INFO] (Minecraft) Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[14:51:43] [main/INFO] (Minecraft) Loaded 7 recipes
+[14:51:43] [main/INFO] (Minecraft) Loaded 1179 advancements
+[14:51:45] [main/INFO] (BiomeModificationImpl) Applied 0 biome modifications to 0 of 63 new biomes in 3.372 ms
+[14:51:45] [Server thread/INFO] (Minecraft) Starting minecraft server version 1.19
+[14:51:45] [Server thread/INFO] (Minecraft) Loading properties
+[14:51:45] [Server thread/INFO] (Minecraft) Default game type: SURVIVAL
+[14:51:45] [Server thread/INFO] (Minecraft) Generating keypair
+[14:51:45] [Server thread/INFO] (Minecraft) Starting Minecraft server on *:25565
+[14:51:45] [Server thread/INFO] (Minecraft) Using epoll channel type
+[14:51:45] [Server thread/INFO] (Minecraft) Preparing level "world"
+[14:51:46] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:18] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[14:52:19] [Worker-Main-2/INFO] (Minecraft) Preparing spawn area: 1%
+[14:52:19] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 25%
+[14:52:20] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 72%
+[14:52:20] [Server thread/INFO] (Minecraft) Time elapsed: 34486 ms
+[14:52:20] [Server thread/INFO] (Minecraft) Done (34.954s)! For help, type "help"

@@ -10,7 +10,7 @@ public class ModConfigs {
     private static ModConfigProvider config;
 
     //config
-    public static Boolean ISENABLED;
+    public static Boolean IS_ENABLED;
     public static int WEB_PORT;
     public static String WEB_ROOT;
     public static String WEB_FILE_ROOT;
@@ -45,7 +45,7 @@ public class ModConfigs {
     }
 
     private static void assignConfigs() {
-        ISENABLED = CONFIG.getOrDefault("basic.isEnabled", false);
+        IS_ENABLED = CONFIG.getOrDefault("web.isEnabled", false);
         WEB_PORT = CONFIG.getOrDefault("web.port", 8080);
         WEB_ROOT = CONFIG.getOrDefault("web.root", "webserver/");
         WEB_FILE_ROOT = CONFIG.getOrDefault("web.file.root", "index.html");

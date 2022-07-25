@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mcwebserver",
-  "version": "0.1.0",
+  "version": "0.1.1",
 
   "name": "McWebserver",
   "description": "A simple webserver that runs alongside the Minecraft Server",
