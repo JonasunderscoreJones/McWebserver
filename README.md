@@ -15,6 +15,8 @@ If used wrongly this mod can be a security risk for your server and all devices 
 
 Do **only** put files into your webservers root directory that you want to be accessible to the internet. Those files are **public** to the entire world.
 
+<img src="https://jonasjones.me/uploads/mod-badges/fabric-api.png" width="250px">
+<img src="https://jonasjones.me/uploads/mod-badges/available-modrinth.png" width="250px">
 
 ### Setup
 
