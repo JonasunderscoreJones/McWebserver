@@ -37,13 +37,13 @@ public class HTTPServer implements Runnable {
         try {
             ServerSocket serverConnect = new ServerSocket(PORT);
             McWebserver.LOGGER.info("Server started.");
-            VerboseLogger.info("Listening for connections on port : \" + PORT + \" ...");
+            McWebserver.LOGGER.info("Listening for connections on port : " + PORT);
 
             // we listen until user halts server execution
             while (true) {
                 HTTPServer myServer = new HTTPServer(serverConnect.accept());
 
-                VerboseLogger.info("Connecton opened. (" + new Date() + ")");
+                VerboseLogger.info("Connection opened. (" + new Date() + ")");
 
                 // create dedicated thread to manage the client connection
                 Thread thread = new Thread(myServer);
@@ -51,7 +51,7 @@ public class HTTPServer implements Runnable {
             }
 
         } catch (IOException e) {
-            McWebserver.LOGGER.info("Server Connection error : " + e.getMessage());
+            VerboseLogger.error("Server Connection error : " + e.getMessage());
         }
     }
 
@@ -89,13 +89,12 @@ public class HTTPServer implements Runnable {
                 byte[] fileData = readFileData(file, fileLength);
 
                 // we send HTTP Headers with data to client
-                out.println("HTTP/1.1 501 Not Implemented");
-                out.println("Server: Java HTTP Server from SSaurel : 1.0");
-                out.println("Date: " + new Date());
-                out.println("Content-type: " + contentMimeType);
-                out.println("Content-length: " + fileLength);
-                out.println(); // blank line between headers and content, very important !
-                out.flush(); // flush character output stream buffer
+                VerboseLogger.info("HTTP/1.1 501 Not Implemented");
+                VerboseLogger.info("Server: Java HTTP Server from SSaurel : 1.0"); //hopefully enough credits
+                VerboseLogger.info("Date: " + new Date());
+                VerboseLogger.info("Content-type: " + contentMimeType);
+                VerboseLogger.info("Content-length: " + fileLength);
+                VerboseLogger.info(""); // blank line between headers and content, very important !
                 // file
                 dataOut.write(fileData, 0, fileLength);
                 dataOut.flush();
@@ -114,13 +113,12 @@ public class HTTPServer implements Runnable {
                     byte[] fileData = readFileData(file, fileLength);
 
                     // send HTTP Headers
-                    out.println("HTTP/1.1 200 OK");
-                    out.println("Server: Java HTTP Server from SSaurel : 1.0");
-                    out.println("Date: " + new Date());
-                    out.println("Content-type: " + content);
-                    out.println("Content-length: " + fileLength);
-                    out.println(); // blank line between headers and content, very important !
-                    out.flush(); // flush character output stream buffer
+                    VerboseLogger.info("HTTP/1.1 200 OK");
+                    VerboseLogger.info("Server: Java HTTP Server from SSaurel : 1.0");
+                    VerboseLogger.info("Date: " + new Date());
+                    VerboseLogger.info("Content-type: " + content);
+                    VerboseLogger.info("Content-length: " + fileLength);
+                    VerboseLogger.info(""); // blank line between headers and content, very important !
 
                     dataOut.write(fileData, 0, fileLength);
                     dataOut.flush();
@@ -134,11 +132,11 @@ public class HTTPServer implements Runnable {
             try {
                 fileNotFound(out, dataOut, fileRequested);
             } catch (IOException ioe) {
-                McWebserver.LOGGER.info("Error with file not found exception : " + ioe.getMessage());
+                VerboseLogger.error("Error with file not found exception : " + ioe.getMessage());
             }
 
         } catch (IOException ioe) {
-            McWebserver.LOGGER.info("Server error : " + ioe);
+            VerboseLogger.error("Server error : " + ioe);
         } finally {
             try {
                 in.close();
@@ -146,7 +144,7 @@ public class HTTPServer implements Runnable {
                 dataOut.close();
                 connect.close(); // we close socket connection
             } catch (Exception e) {
-                McWebserver.LOGGER.info("Error closing stream : " + e.getMessage());
+                VerboseLogger.error("Error closing stream : " + e.getMessage());
             }
 
             VerboseLogger.info("Connection closed.");
@@ -184,17 +182,17 @@ public class HTTPServer implements Runnable {
         String content = "text/html";
         byte[] fileData = readFileData(file, fileLength);
 
-        out.println("HTTP/1.1 404 File Not Found");
-        out.println("Server: Java HTTP Server from SSaurel : 1.0");
-        out.println("Date: " + new Date());
-        out.println("Content-type: " + content);
-        out.println("Content-length: " + fileLength);
-        out.println(); // blank line between headers and content, very important !
+        VerboseLogger.error("HTTP/1.1 404 File Not Found");
+        VerboseLogger.info("Server: Java HTTP Server from SSaurel : 1.0");
+        VerboseLogger.info("Date: " + new Date());
+        VerboseLogger.info("Content-type: " + content);
+        VerboseLogger.info("Content-length: " + fileLength);
+        VerboseLogger.info(""); // blank line between headers and content, very important !
         out.flush(); // flush character output stream buffer
 
         dataOut.write(fileData, 0, fileLength);
         dataOut.flush();
 
-        VerboseLogger.info("File " + fileRequested + " not found");
+        VerboseLogger.error("File " + fileRequested + " not found");
     }
 }
