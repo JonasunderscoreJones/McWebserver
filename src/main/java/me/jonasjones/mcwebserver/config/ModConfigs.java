@@ -31,7 +31,7 @@ public class ModConfigs {
 
         //make verbose logger show that it is active and print configs to logger
         VerboseLogger.info("Verbose Logger is now logging.");
-        VerboseLogger.info("Loaded config file successfully: found " + config.getConfigsList().size() + " overrides and configurations.");
+        VerboseLogger.info("Loaded McWebserver config file successfully: found " + config.getConfigsList().size() + " overrides and configurations.");
     }
 
     private static void createConfigs() {
