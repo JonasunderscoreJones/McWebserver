@@ -28,7 +28,7 @@ Do **only** put files into your webservers root directory that you want to be ac
 
 **Use at your own risk!**
 
-<img src="https://jonasjones.me/uploads/mod-badges/fabric-api.png" width="250px">
+
 <img src="https://jonasjones.me/uploads/mod-badges/available-modrinth.png" width="250px">
 
 ### Setup
