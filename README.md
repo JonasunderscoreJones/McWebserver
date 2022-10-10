@@ -19,7 +19,6 @@ The mod allows You to host websites, share files and Server Backups directly fro
 The http server has up to no performance impact on the server on idle and only slightly affects it for a short amount of time (usually a couple milliseconds) when a user visits the website or requests a file.
 
 Currently no ssl encryption is implemented yet and therefore HTTPS isn't possible, but it's coming soon(TM).
-A Forge port is also on the way.
 
 ### Warning
 If used wrongly this mod can be a security risk for your server and all devices connected to the network that your server is in.
