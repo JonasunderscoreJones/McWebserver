@@ -1,23 +1,23 @@
 package me.jonasjones.mcwebserver.web;
 
 
-import me.jonasjones.mcwebserver.McWebserver;
-import net.minecraft.server.MinecraftServer;
+import me.jonasjones.mcwebserver.config.ModConfigs;
 
-public class ServerHandler extends Thread {
-    static ServerHandler thread = new ServerHandler();
-    public static void startServer() {
-        McWebserver.LOGGER.info("Starting Webserver...");
-        thread.start();
-    }
+import java.net.Socket;
 
-    public static void stopServer() throws InterruptedException {
-        McWebserver.LOGGER.info("Stopping Webserver...");
-        thread.interrupt();
-        McWebserver.LOGGER.info("Webserver stopped!");
-    }
+import static me.jonasjones.mcwebserver.McWebserver.LOGGER;
+
+public class ServerHandler implements Runnable {
+    public static Socket socket = new Socket();
 
     public void run() {
-        HTTPServer.main();
+        if (ModConfigs.IS_ENABLED) {
+            LOGGER.info("Starting Webserver...");
+
+            new HTTPServer(socket);
+            HTTPServer.main();
+        } else {
+            LOGGER.info("Webserver disabled in the config file.");
+        }
     }
 }

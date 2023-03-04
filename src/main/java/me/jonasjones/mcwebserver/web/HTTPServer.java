@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.StringTokenizer;
 
+import static me.jonasjones.mcwebserver.McWebserver.mcserveractive;
+
 public class HTTPServer implements Runnable {
     static Path WEB_ROOT;
     static final String DEFAULT_FILE = ModConfigs.WEB_FILE_ROOT;
@@ -62,7 +64,7 @@ public class HTTPServer implements Runnable {
                 McWebserver.LOGGER.info("Listening for connections on port : " + PORT);
 
                 // we listen until user halts server execution
-                while (true) {
+                while (mcserveractive) {
                     HTTPServer myServer = new HTTPServer(serverConnect.accept());
 
                     VerboseLogger.info("Connection opened. (" + Instant.now() + ")");
@@ -70,6 +72,7 @@ public class HTTPServer implements Runnable {
                     // create dedicated thread to manage the client connection
                     Thread thread = new Thread(myServer);
                     thread.start();
+
                 }
             }
 
@@ -80,105 +83,108 @@ public class HTTPServer implements Runnable {
 
     @Override
     public void run() {
-        // we manage our particular client connection
-        BufferedReader in = null; PrintWriter out = null; BufferedOutputStream dataOut = null;
-        String fileRequested = null;
+        if (mcserveractive) {
+            // we manage our particular client connection
+            BufferedReader in = null;
+            PrintWriter out = null;
+            BufferedOutputStream dataOut = null;
+            String fileRequested = null;
 
-        try {
-            // we read characters from the client via input stream on the socket
-            in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-            // we get character output stream to client (for headers)
-            out = new PrintWriter(connect.getOutputStream());
-            // get binary output stream to client (for requested data)
-            dataOut = new BufferedOutputStream(connect.getOutputStream());
+            try {
+                // we read characters from the client via input stream on the socket
+                in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
+                // we get character output stream to client (for headers)
+                out = new PrintWriter(connect.getOutputStream());
+                // get binary output stream to client (for requested data)
+                dataOut = new BufferedOutputStream(connect.getOutputStream());
 
-            // get first line of the request from the client
-            String input = in.readLine();
-            // we parse the request with a string tokenizer
-            StringTokenizer parse = new StringTokenizer(input);
-            String method = parse.nextToken().toUpperCase(); // we get the HTTP method of the client
-            // we get file requested
-            fileRequested = parse.nextToken().toLowerCase();
+                // get first line of the request from the client
+                String input = in.readLine();
+                // we parse the request with a string tokenizer
+                StringTokenizer parse = new StringTokenizer(input);
+                String method = parse.nextToken().toUpperCase(); // we get the HTTP method of the client
+                // we get file requested
+                fileRequested = parse.nextToken().toLowerCase();
 
-            // we support only GET and HEAD methods, we check
-            if (!method.equals("GET")  &&  !method.equals("HEAD")) {
-                VerboseLogger.info("501 Not Implemented : " + method + " method.");
+                // we support only GET and HEAD methods, we check
+                if (!method.equals("GET") && !method.equals("HEAD")) {
+                    VerboseLogger.info("501 Not Implemented : " + method + " method.");
 
-                // we return the not supported file to the client
-                Path file = WEB_ROOT.resolve(METHOD_NOT_SUPPORTED);
-                long fileLength = Files.size(file);
-                String contentMimeType = "text/html";
-                //read content to return to client
-                byte[] fileData = readFileData(file);
+                    // we return the not supported file to the client
+                    Path file = WEB_ROOT.resolve(METHOD_NOT_SUPPORTED);
+                    long fileLength = Files.size(file);
+                    String contentMimeType = "text/html";
+                    //read content to return to client
+                    byte[] fileData = readFileData(file);
 
-                // we send HTTP Headers with data to client
-                dataOut.write(NOT_IMPLEMENTED);
-                dataOut.write(HEADERS); //hopefully enough credits
-                dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                dataOut.write("Content-Type: %s\r\n".formatted(contentMimeType).getBytes(StandardCharsets.UTF_8));
-                dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-                dataOut.write(CRLF); // blank line between headers and content, very important !
-                // file
-                dataOut.write(fileData, 0, fileData.length);
-                dataOut.flush();
-
-            } else {
-                // GET or HEAD method
-                if (fileRequested.endsWith("/")) {
-                    fileRequested += DEFAULT_FILE;
-                }
-                if (fileRequested.startsWith("/")) {
-                    fileRequested = fileRequested.substring(1);
-                }
-
-                Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
-                if (!file.startsWith(WEB_ROOT)) {
-                    VerboseLogger.warn("Access to file outside root: " + file);
-                    throw new NoSuchFileException(fileRequested);
-                }
-                int fileLength = (int)Files.size(file);
-                String contentType = getContentType(fileRequested);
-                byte[] fileData = readFileData(file);
-
-                // send HTTP Headers
-                dataOut.write(OK);
-                dataOut.write(HEADERS);
-                dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
-                dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-                dataOut.write(CRLF); // blank line between headers and content, very important !
-                if (method.equals("GET")) { // GET method so we return content
-                    dataOut.write(fileData, 0, fileLength);
+                    // we send HTTP Headers with data to client
+                    dataOut.write(NOT_IMPLEMENTED);
+                    dataOut.write(HEADERS); //hopefully enough credits
+                    dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("Content-Type: %s\r\n".formatted(contentMimeType).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write(CRLF); // blank line between headers and content, very important !
+                    // file
+                    dataOut.write(fileData, 0, fileData.length);
                     dataOut.flush();
+
+                } else {
+                    // GET or HEAD method
+                    if (fileRequested.endsWith("/")) {
+                        fileRequested += DEFAULT_FILE;
+                    }
+                    if (fileRequested.startsWith("/")) {
+                        fileRequested = fileRequested.substring(1);
+                    }
+
+                    Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
+                    if (!file.startsWith(WEB_ROOT)) {
+                        VerboseLogger.warn("Access to file outside root: " + file);
+                        throw new NoSuchFileException(fileRequested);
+                    }
+                    int fileLength = (int) Files.size(file);
+                    String contentType = getContentType(fileRequested);
+                    byte[] fileData = readFileData(file);
+
+                    // send HTTP Headers
+                    dataOut.write(OK);
+                    dataOut.write(HEADERS);
+                    dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
+                    dataOut.write(CRLF); // blank line between headers and content, very important !
+                    if (method.equals("GET")) { // GET method so we return content
+                        dataOut.write(fileData, 0, fileLength);
+                        dataOut.flush();
+                    }
+
+                    VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
+
                 }
 
-                VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
+            } catch (NoSuchFileException e) {
+                try {
+                    fileNotFound(out, dataOut, fileRequested);
+                } catch (IOException ioe) {
+                    VerboseLogger.error("Error with file not found exception : " + ioe.getMessage());
+                }
 
-            }
-
-        } catch (NoSuchFileException e) {
-            try {
-                fileNotFound(out, dataOut, fileRequested);
             } catch (IOException ioe) {
-                VerboseLogger.error("Error with file not found exception : " + ioe.getMessage());
+                VerboseLogger.error("Server error : " + ioe);
+            } finally {
+                try {
+                    in.close();
+                    out.close();
+                    dataOut.close();
+                    connect.close(); // we close socket connection
+                } catch (Exception e) {
+                    VerboseLogger.error("Error closing stream : " + e.getMessage());
+                }
+
+                VerboseLogger.info("Connection closed.");
             }
 
-        } catch (IOException ioe) {
-            VerboseLogger.error("Server error : " + ioe);
-        } finally {
-            try {
-                in.close();
-                out.close();
-                dataOut.close();
-                connect.close(); // we close socket connection
-            } catch (Exception e) {
-                VerboseLogger.error("Error closing stream : " + e.getMessage());
-            }
-
-            VerboseLogger.info("Connection closed.");
         }
-
-
     }
 
     private byte[] readFileData(Path file) throws IOException {
