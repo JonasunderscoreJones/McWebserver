@@ -8,7 +8,7 @@ This is the fabric port, the Forge version is available [here](https://github.co
 <a href="https://modrinth.com/mod/mcwebserver"><img src="https://img.shields.io/modrinth/game-versions/mcwebserver?logo=modrinth&color=242629&labelColor=00AF5C&logoColor=white"></a>
 ![GitHub all releases](https://img.shields.io/github/downloads/J-onasJones/McWebserver/total?label=GitHub%20downloads)
 
-<a align="center"><img src="https://jonasjones.me/uploads/mod-badges/support-fabric.png" width="250px"><img src="https://jonasjones.me/uploads/mod-badges/support-quilt.png" width="250px"><img src="https://jonasjones.me/uploads/mod-badges/support-forge.png" width="250px"></a>
+<a align="center"><img src="http://cdn.jonasjones.me/uploads/mod-badges/support-fabric.png" width="250px"><img src="http://cdn.jonasjones.me/uploads/mod-badges/support-quilt.png" width="250px"><img src="http://cdn.jonasjones.me/uploads/mod-badges/support-forge.png" width="250px"></a>
 
 
 
