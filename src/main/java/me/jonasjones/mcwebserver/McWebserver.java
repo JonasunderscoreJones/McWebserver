@@ -35,25 +35,27 @@ public class McWebserver implements ModInitializer {
 		new Thread(() -> {
 			while (true) {
 				if (!mcserveractive) {
-					LOGGER.info("LMFAFMAKONJDGOADJINGOADNGHOADNHGOADNHOADHON");
-					try {
-						TimeUnit.SECONDS.sleep(2);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
+					sleep(2);
+					for (int i = 0; i < 2; i++) {
+						CUrl curl = new CUrl("http://localhost:" + WEB_PORT + "/index.html").timeout(1, 1);
+						curl.exec();
+						sleep(1);
 					}
-					System.out.print("curl 127.0.0.1:" + WEB_PORT);
-					CUrl curl = new CUrl("curl http://localhost:" + WEB_PORT + "/index.html");
-					curl.exec();
+					LOGGER.info("Webserver Stopped!");
 					break;
 				} else {
-					System.out.print(mcserveractive);
-					try {
-						TimeUnit.SECONDS.sleep(2);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
-					}
+					sleep(2);
 				}
 			}
 		}).start();
 	}
+
+	private void sleep(int seconds) {
+		try {
+			TimeUnit.SECONDS.sleep(seconds);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
