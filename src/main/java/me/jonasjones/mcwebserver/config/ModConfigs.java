@@ -15,6 +15,8 @@ public class ModConfigs {
     public static String WEB_ROOT;
     public static String WEB_FILE_ROOT;
     public static String WEB_FILE_404;
+    public static Boolean SERVER_API_ENABLED;
+    public static Boolean ADV_API_ENABLED;
     public static String WEB_FILE_NOSUPPORT;
     public static Boolean VERBOSE = false; //needs to be set to false since the verbose logger is called before config file is fully loaded
 
@@ -40,6 +42,8 @@ public class ModConfigs {
         config.addKeyValuePair(new Pair<>("web.root", "webserver/"), "the root directory of the webserver, starting from the main server directory");
         config.addKeyValuePair(new Pair<>("web.file.root", "index.html"), "the name of the html file for the homepage");
         config.addKeyValuePair(new Pair<>("web.file.404", "404.html"), "the name of the html file for 404 page");
+        config.addKeyValuePair(new Pair<>("web.api", true), "whether or not the webserver api should be enabled or not");
+        config.addKeyValuePair(new Pair<>("web.api.adv", true), "whether or not the api should expose information such as player coordinates and inventory");
         config.addKeyValuePair(new Pair<>("web.file.notSupported", "not_supported.html"), "the name of the html file for 'not supported' page");
         config.addKeyValuePair(new Pair<>("logger.verbose", true), "whether or not to log verbose output");
     }
@@ -50,6 +54,8 @@ public class ModConfigs {
         WEB_ROOT = CONFIG.getOrDefault("web.root", "webserver/");
         WEB_FILE_ROOT = CONFIG.getOrDefault("web.file.root", "index.html");
         WEB_FILE_404 = CONFIG.getOrDefault("web.file.404", "404.html");
+        SERVER_API_ENABLED = CONFIG.getOrDefault("web.api", true);
+        ADV_API_ENABLED = CONFIG.getOrDefault("web.api.adv", true);
         WEB_FILE_NOSUPPORT = CONFIG.getOrDefault("web.file.notSupported", "not_supported.html");
         VERBOSE = CONFIG.getOrDefault("logger.verbose", true);
     }
