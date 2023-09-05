@@ -44,6 +44,7 @@ public class HTTPServer implements Runnable {
 
     // Client Connection via Socket Class
     private final Socket connect;
+    private final MimeTypeIdentifier mimetypeidentifier = new MimeTypeIdentifier();
 
     static {
         try {
@@ -143,7 +144,14 @@ public class HTTPServer implements Runnable {
                         throw new NoSuchFileException(fileRequested);
                     }
                     int fileLength = (int) Files.size(file);
-                    String contentType = getContentType(fileRequested);
+                    int fileExtensionStartIndex = fileRequested.lastIndexOf(".") + 1;
+                    String contentType;
+                    if (fileExtensionStartIndex > 0) {
+                        contentType = mimetypeidentifier.compare(fileRequested.substring(fileExtensionStartIndex));
+                    } else {
+                        contentType = "text/plain";
+                    }
+
                     byte[] fileData = readFileData(file);
 
                     // send HTTP Headers
@@ -189,16 +197,6 @@ public class HTTPServer implements Runnable {
 
     private byte[] readFileData(Path file) throws IOException {
         return Files.readAllBytes(file);
-    }
-
-    // return supported MIME Types
-    private String getContentType(String fileRequested) {
-        if (fileRequested.endsWith(".htm")  ||  fileRequested.endsWith(".html"))
-            return "text/html";
-        else if (fileRequested.endsWith(".css"))
-            return "text/css";
-        else
-            return "text/plain";
     }
 
     private void fileNotFound(PrintWriter out, OutputStream dataOut, String fileRequested) throws IOException {
