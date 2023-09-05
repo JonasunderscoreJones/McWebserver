@@ -3,6 +3,9 @@ package me.jonasjones.mcwebserver.web;
 import me.jonasjones.mcwebserver.config.ModConfigs;
 import me.jonasjones.mcwebserver.McWebserver;
 import me.jonasjones.mcwebserver.util.VerboseLogger;
+import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
+import me.jonasjones.mcwebserver.web.api.v1.ApiRequests;
+import me.jonasjones.mcwebserver.web.api.v1.ApiRequestsUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -20,9 +23,10 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.StringTokenizer;
 
-import static me.jonasjones.mcwebserver.McWebserver.mcserveractive;
+import static me.jonasjones.mcwebserver.web.ServerHandler.mcserveractive;
+import static me.jonasjones.mcwebserver.web.api.v1.ApiHandler.isApiRequest;
 
-public class HTTPServer implements Runnable {
+public class HttpServer implements Runnable {
     static Path WEB_ROOT;
     static final String DEFAULT_FILE = ModConfigs.WEB_FILE_ROOT;
     static final String FILE_NOT_FOUND = ModConfigs.WEB_FILE_404;
@@ -44,6 +48,7 @@ public class HTTPServer implements Runnable {
 
     // Client Connection via Socket Class
     private final Socket connect;
+    private Boolean isApiRequest = false;
 
     static {
         try {
@@ -53,7 +58,7 @@ public class HTTPServer implements Runnable {
         }
     }
 
-    public HTTPServer(Socket c) {
+    public HttpServer(Socket c) {
         connect = c;
     }
 
@@ -65,12 +70,13 @@ public class HTTPServer implements Runnable {
 
                 // we listen until user halts server execution
                 while (mcserveractive) {
-                    HTTPServer myServer = new HTTPServer(serverConnect.accept());
+                    HttpServer myServer = new HttpServer(serverConnect.accept());
 
                     VerboseLogger.info("Connection opened. (" + Instant.now() + ")");
 
                     // create dedicated thread to manage the client connection
                     Thread thread = new Thread(myServer);
+                    thread.setName("McWebserver-worker");
                     thread.start();
 
                 }
@@ -108,6 +114,7 @@ public class HTTPServer implements Runnable {
 
                 // we support only GET and HEAD methods, we check
                 if (!method.equals("GET") && !method.equals("HEAD")) {
+                    isApiRequest = false;
                     VerboseLogger.info("501 Not Implemented : " + method + " method.");
 
                     // we return the not supported file to the client
@@ -127,8 +134,50 @@ public class HTTPServer implements Runnable {
                     // file
                     dataOut.write(fileData, 0, fileData.length);
                     dataOut.flush();
+                } else if (isApiRequest(fileRequested)) {
+                    isApiRequest = true;
+
+                    // Set appropriate response headers
+                    dataOut.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                    if (fileRequested.equals("/api/v1/servericon")) {
+                        dataOut.write("Content-Type: image/png\r\n".getBytes(StandardCharsets.UTF_8));
+                        // Get server icon from ApiHandler
+                        byte[] serverIcon = ApiRequestsUtil.getServerIcon();
+                        int contentLength = serverIcon.length;
+
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+
+                        // Send server icon
+                        dataOut.write(serverIcon, 0, contentLength);
+                        dataOut.flush();
+                    } else {
+                        dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                        String jsonString = "";
+                        try {
+                            // Get JSON data from ApiHandler
+                            jsonString = ApiHandler.handle(fileRequested);
+                        } catch (Exception e) {
+                            VerboseLogger.error("Error getting JSON data from ApiHandler: " + e.getMessage());
+                            jsonString = ApiRequests.internalServerError();
+                        }
+
+
+                        byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                        int contentLength = jsonBytes.length;
+
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+
+                        // Send JSON data
+                        dataOut.write(jsonBytes, 0, contentLength);
+                        dataOut.flush();
+                    }
+
 
                 } else {
+                    isApiRequest = false;
                     // GET or HEAD method
                     if (fileRequested.endsWith("/")) {
                         fileRequested += DEFAULT_FILE;
@@ -164,6 +213,8 @@ public class HTTPServer implements Runnable {
 
             } catch (NoSuchFileException e) {
                 try {
+                    assert out != null;
+                    assert dataOut != null;
                     fileNotFound(out, dataOut, fileRequested);
                 } catch (IOException ioe) {
                     VerboseLogger.error("Error with file not found exception : " + ioe.getMessage());
@@ -175,6 +226,7 @@ public class HTTPServer implements Runnable {
                 try {
                     in.close();
                     out.close();
+                    assert dataOut != null;
                     dataOut.close();
                     connect.close(); // we close socket connection
                 } catch (Exception e) {
@@ -193,7 +245,9 @@ public class HTTPServer implements Runnable {
 
     // return supported MIME Types
     private String getContentType(String fileRequested) {
-        if (fileRequested.endsWith(".htm")  ||  fileRequested.endsWith(".html"))
+        if (isApiRequest) {
+            return "application/json";
+        } else if (fileRequested.endsWith(".htm")  ||  fileRequested.endsWith(".html"))
             return "text/html";
         else if (fileRequested.endsWith(".css"))
             return "text/css";
