@@ -32,12 +32,4 @@ Do **only** put files into your webservers root directory that you want to be ac
 <img src="https://raw.githubusercontent.com/modrinth/art/main/Branding/Badge/badge-light__184x72.png" width="250px">
 
 ### Setup
-
-1. Head over to [modrinth](https://modrinth.com/mod/mcwebserver) or [curseforge](https://www.curseforge.com/minecraft/mc-mods/mcwebserver) and download the correct version of the mod into your mods folder.
-2. Restart Your Minecraft Server and let the mod create the config file. The webserver will be offline by default.
-3. In the config file, enable the webserver and adjust all settings if needed.
-4. Add the following files to your Webservers root directory:
-    - index.html (the homepage)
-    - 404.html (the website that shows up if a request is sent for a file that doesn't exist on the server)
-    - not_supported.html (this is page is very unlikely to show up at any time and isn't necessary)
-5. Restart your Minecraft server and You're good to go!
+For Setup and further Info, please refer to the [Wiki](https://github.com/J-onasJones/McWebserver/wiki)
