@@ -14,12 +14,13 @@ This is the fabric port, the Forge version is available [here](https://github.co
 
 
 ### About the mod
-This mod runs a simple HTTP server alongside the minecraft server in seperate threads.
-The mod allows You to host websites, share files and Server Backups directly from your server without the need of a seperate server setup. Adjust the port and design your website.
+This mod runs a simple HTTP server alongside the minecraft server.
+The mod allows You to host websites and share files and Server Backups directly from your server without the need of a seperate server setup. Adjust the port and design your website.
 
-The http server has up to no performance impact on the server on idle and only slightly affects it for a short amount of time (usually a couple milliseconds) when a user visits the website or requests a file.
+### API
+It also has a powerful API allowing you to fetch server info about players and the server itself. More info on the [API's Wiki page](https://github.com/J-onasJones/McWebserver/wiki/3.-Web%E2%80%90API)
 
-Currently no ssl encryption is implemented yet and therefore HTTPS isn't possible, but it's coming soon(TM).
+The http server has up to no performance impact on the server
 
 ### Warning
 If used wrongly this mod can be a security risk for your server and all devices connected to the network that your server is in.
