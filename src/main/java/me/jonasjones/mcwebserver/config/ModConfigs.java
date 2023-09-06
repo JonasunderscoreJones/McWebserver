@@ -55,7 +55,7 @@ public class ModConfigs {
         WEB_FILE_ROOT = CONFIG.getOrDefault("web.file.root", "index.html");
         WEB_FILE_404 = CONFIG.getOrDefault("web.file.404", "404.html");
         SERVER_API_ENABLED = CONFIG.getOrDefault("web.api", true);
-        ADV_API_ENABLED = CONFIG.getOrDefault("web.api.adv", true);
+        ADV_API_ENABLED = CONFIG.getOrDefault("web.api.adv", false);
         WEB_FILE_NOSUPPORT = CONFIG.getOrDefault("web.file.notSupported", "not_supported.html");
         VERBOSE = CONFIG.getOrDefault("logger.verbose", true);
     }
