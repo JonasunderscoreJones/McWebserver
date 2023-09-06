@@ -141,11 +141,21 @@ public class HttpServer implements Runnable {
                     // Set appropriate response headers
                     dataOut.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
                     dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                    if (fileRequested.equals("/api/v1/servericon")) {
-                        dataOut.write("Content-Type: image/png\r\n".getBytes(StandardCharsets.UTF_8));
-                        // Get server icon from ApiHandler
-                        byte[] serverIcon = ApiRequestsUtil.getServerIcon();
-                        int contentLength = serverIcon.length;
+                    if (fileRequested.equals("/api/v1/favicon")) {
+                        int contentLength;
+                        byte[] serverIcon;
+                        try {
+                            dataOut.write("Content-Type: image/png\r\n".getBytes(StandardCharsets.UTF_8));
+                            // Get server icon from ApiHandler
+                            serverIcon = ApiRequestsUtil.getServerIcon();
+                            contentLength = serverIcon.length;
+                        } catch (Exception e) {
+                            serverIcon = ApiRequests.internalServerError().getBytes(StandardCharsets.UTF_8);
+                            VerboseLogger.error("Error getting server icon from ApiHandler: " + e.getMessage());
+                            dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                            contentLength = serverIcon.length;
+                        }
+
 
                         dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
                         dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
