@@ -28,4 +28,8 @@ public class ApiRequests {
     public static String internalServerError() {
         return "{\"error\":{\"status\":500,\"message\":\"Internal Server Error\"}}";
     }
+
+    public static String forbiddenRequest() {
+        return "{\"error\":{\"status\":403,\"message\":\"Forbidden\"}}";
+    }
 }

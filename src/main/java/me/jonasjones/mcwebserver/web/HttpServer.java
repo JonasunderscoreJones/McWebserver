@@ -137,6 +137,7 @@ public class HttpServer implements Runnable {
                     dataOut.flush();
                 } else if (isApiRequest(fileRequested)) {
                     isApiv1Request = true;
+                    // Check if server API is enabled
                     if (ModConfigs.SERVER_API_ENABLED) {
                         // Set appropriate response headers
                         dataOut.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
@@ -177,17 +178,17 @@ public class HttpServer implements Runnable {
                         }
                     } else {
                         // Server API is disabled
+                        String jsonString = ApiRequests.forbiddenRequest();
+                        byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                        int contentLength = jsonBytes.length;
                         dataOut.write("HTTP/1.1 403 Forbidden\r\n".getBytes(StandardCharsets.UTF_8));
                         dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                        dataOut.write("Content-Type: text/html\r\n".getBytes(StandardCharsets.UTF_8));
-                        dataOut.write("Content-Length: 0\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
                         dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+                        dataOut.write(jsonBytes, 0, contentLength);
                         dataOut.flush();
                     }
-
-
-
-
                 } else {
                     isApiv1Request = false;
                     // GET or HEAD method
