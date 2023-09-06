@@ -62,7 +62,6 @@ public class ApiHandler {
     }
 
     public static void startHandler() {
-        //This is a really awful way of collection all this info. Please don't kill me.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.isRunning()) {
                 ApiRequestsUtil.setMOTD(server.getServerMotd());
@@ -82,7 +81,6 @@ public class ApiHandler {
     }
 
     public static void startAdvHandler() {
-        //This is a really awful way of collection all this info. Please don't kill me.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.isRunning()) {
                 ApiRequestsUtil.setSERVER_PLAYER_ENTITY_LIST(server.getPlayerManager().getPlayerList());
