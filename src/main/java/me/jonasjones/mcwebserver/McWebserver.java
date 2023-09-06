@@ -35,6 +35,8 @@ public class McWebserver implements ModInitializer {
 				//start collecting advanced api info
 				ApiHandler.startAdvHandler();
 				LOGGER.info("Advanced Server API enabled!");
+			} else {
+				LOGGER.info("Advanced Server API disabled in the config file.");
 			}
 		} else {
 			LOGGER.info("Server API disabled in the config file.");
