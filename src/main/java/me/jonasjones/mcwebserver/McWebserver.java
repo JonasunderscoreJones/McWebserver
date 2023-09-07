@@ -2,6 +2,7 @@ package me.jonasjones.mcwebserver;
 
 import com.roxstudio.utils.CUrl;
 import me.jonasjones.mcwebserver.config.ModConfigs;
+import me.jonasjones.mcwebserver.web.HttpServer;
 import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
 import me.jonasjones.mcwebserver.web.ServerHandler;
 import net.fabricmc.api.ModInitializer;
@@ -19,6 +20,7 @@ public class McWebserver implements ModInitializer {
 	public static String MOD_ID = "mcwebserver";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static final Logger VERBOSELOGGER = LoggerFactory.getLogger(MOD_ID + " - VERBOSE LOGGER");
+	public static Boolean ISFIRSTSTART = false;
 
 	@Override
 	public void onInitialize() {
@@ -26,6 +28,12 @@ public class McWebserver implements ModInitializer {
 		// register configs
 		ModConfigs.registerConfigs();
 		LOGGER.info("McWebserver initialized!");
+
+		if (ISFIRSTSTART) {
+			LOGGER.info("");
+			ServerHandler.createServerDir();
+
+		}
 
 		if (SERVER_API_ENABLED) {
 			//start collecting api info

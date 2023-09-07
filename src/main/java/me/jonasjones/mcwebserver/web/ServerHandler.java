@@ -3,8 +3,10 @@ package me.jonasjones.mcwebserver.web;
 
 import com.roxstudio.utils.CUrl;
 import me.jonasjones.mcwebserver.config.ModConfigs;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.net.Socket;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import static me.jonasjones.mcwebserver.McWebserver.LOGGER;
@@ -58,5 +60,24 @@ public class ServerHandler implements Runnable {
         } else {
             LOGGER.info("Webserver disabled in the config file.");
         }
+    }
+
+    public static void createServerDir() {
+        // create server dir as specified in the config WEB_ROOT
+        Path path = FabricLoader.getInstance().getGameDir();
+        Path webroot = path.resolve(ModConfigs.WEB_ROOT);
+        webroot.toFile().mkdirs();
+    }
+
+    public static void createExampleFiles() {
+        // create example files
+        Path path = FabricLoader.getInstance().getGameDir();
+        Path webroot = path.resolve(ModConfigs.WEB_ROOT);
+        Path index = webroot.resolve(ModConfigs.WEB_FILE_ROOT);
+        Path notsupported = webroot.resolve(ModConfigs.WEB_FILE_NOSUPPORT);
+        Path notfound = webroot.resolve(ModConfigs.WEB_FILE_404);
+        index.toFile().mkdirs();
+        notsupported.toFile().mkdirs();
+        notfound.toFile().mkdirs();
     }
 }
