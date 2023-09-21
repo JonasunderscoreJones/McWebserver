@@ -80,7 +80,7 @@ public class ApiHandler {
         });
     }
 
-    public static void startAdvHandler() {
+    /*public static void startAdvHandler() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.isRunning()) {
                 ApiRequestsUtil.setSERVER_PLAYER_ENTITY_LIST(server.getPlayerManager().getPlayerList());
@@ -93,6 +93,6 @@ public class ApiHandler {
                 //SERVER_PLAYER_ENTITY_LIST = server.getPlayerInteractionManager().getPlayerList();
             }
         });
-    }
+    }*/
 
 }

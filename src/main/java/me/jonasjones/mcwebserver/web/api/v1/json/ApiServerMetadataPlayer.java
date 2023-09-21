@@ -7,5 +7,4 @@ public class ApiServerMetadataPlayer {
     private String ID;
     private String NAME;
     private String PROPERTIES;
-    private Boolean LEGACY;
 }

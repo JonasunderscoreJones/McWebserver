@@ -95,7 +95,6 @@ public class ApiRequestsUtil {
             player.setID(profile.getId().toString());
             player.setNAME(profile.getName());
             //player.setPROPERTIES(profile.getProperties().toString()); //Add support for the properties later
-            player.setLEGACY(profile.isLegacy());
             players.add(player);
         }
         return players;
