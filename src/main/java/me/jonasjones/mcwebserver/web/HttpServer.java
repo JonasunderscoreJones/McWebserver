@@ -7,6 +7,7 @@ import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
 import me.jonasjones.mcwebserver.web.api.v1.ApiRequests;
 import me.jonasjones.mcwebserver.web.api.v1.ApiRequestsUtil;
 
+import java.awt.desktop.SystemEventListener;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -96,6 +97,7 @@ public class HttpServer implements Runnable {
             PrintWriter out = null;
             BufferedOutputStream dataOut = null;
             String fileRequested = null;
+            String apiToken;
 
             try {
                 // we read characters from the client via input stream on the socket
@@ -112,6 +114,16 @@ public class HttpServer implements Runnable {
                 String method = parse.nextToken().toUpperCase(); // we get the HTTP method of the client
                 // we get file requested
                 fileRequested = parse.nextToken().toLowerCase();
+                String header;
+                while ((header = in.readLine()) != null && !header.isEmpty()) {
+
+                    // Check if the header contains your API token
+                    if (header.startsWith("Authorization: Bearer ")) {
+                        apiToken = header.substring("Authorization: Bearer ".length());
+                        System.out.println("API Token: " + apiToken);
+                        // Now you have the API token, you can use it for authentication.
+                    }
+                }
 
                 // we support only GET and HEAD methods, we check
                 if (!method.equals("GET") && !method.equals("HEAD")) {
