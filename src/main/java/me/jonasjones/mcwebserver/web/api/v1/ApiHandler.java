@@ -46,9 +46,9 @@ public class ApiHandler {
             case "ticks" -> {
                 return ApiRequests.singleValueRequest(String.valueOf(ApiRequestsUtil.getTICKS()));
             }
-            case "ticktime" -> {
+            /*case "ticktime" -> {
                 return ApiRequests.singleValueRequest(String.valueOf(ApiRequestsUtil.getTICK_TIME()));
-            }
+            }*/
             case "timereference" -> {
                 return ApiRequests.singleValueRequest(String.valueOf(ApiRequestsUtil.getTIME_REFERENCE()));
             }
@@ -74,7 +74,7 @@ public class ApiHandler {
                 ApiRequestsUtil.setMAX_PLAYER_COUNT(server.getMaxPlayerCount());
                 ApiRequestsUtil.setSERVER_METADATA(server.getServerMetadata());
                 ApiRequestsUtil.setTICKS(server.getTicks());
-                ApiRequestsUtil.setTICK_TIME(server.getTickTime());
+                //ApiRequestsUtil.setTICK_TIME(server.getTickTime());
                 ApiRequestsUtil.setTIME_REFERENCE(server.getTimeReference());
             }
         });

@@ -47,8 +47,8 @@ public class ApiRequestsUtil {
     private static ServerMetadata SERVER_METADATA;
     @Getter @Setter
     private static int TICKS;
-    @Getter @Setter
-    private static float TICK_TIME;
+    //@Getter @Setter
+    //private static float TICK_TIME;
     @Getter @Setter
     private static long TIME_REFERENCE;
     @Getter @Setter
@@ -108,7 +108,7 @@ public class ApiRequestsUtil {
         apiServerInfo.setLOADER_VERSION(LOADER_VERSION);
         apiServerInfo.setMETADATA(serverMetadata());
         apiServerInfo.setTICKS(ApiRequestsUtil.getTICKS());
-        apiServerInfo.setTICK_TIME(ApiRequestsUtil.getTICK_TIME());
+        //apiServerInfo.setTICK_TIME(ApiRequestsUtil.getTICK_TIME());
         apiServerInfo.setTIME_REFERENCE(ApiRequestsUtil.getTIME_REFERENCE());
 
         return gson.toJsonTree(apiServerInfo).getAsJsonObject();
