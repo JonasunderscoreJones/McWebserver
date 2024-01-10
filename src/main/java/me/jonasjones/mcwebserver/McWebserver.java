@@ -1,6 +1,5 @@
 package me.jonasjones.mcwebserver;
 
-import com.roxstudio.utils.CUrl;
 import me.jonasjones.mcwebserver.config.ModConfigs;
 import me.jonasjones.mcwebserver.web.HttpServer;
 import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
