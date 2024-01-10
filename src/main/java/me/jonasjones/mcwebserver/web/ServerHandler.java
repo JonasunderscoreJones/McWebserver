@@ -1,11 +1,11 @@
 package me.jonasjones.mcwebserver.web;
 
-
-import com.roxstudio.utils.CUrl;
 import me.jonasjones.mcwebserver.config.ModConfigs;
 import net.fabricmc.loader.api.FabricLoader;
 
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -23,15 +23,38 @@ public class ServerHandler implements Runnable {
     public static void start() {
         webserverthread.setName("McWebserver-webserver");
         webserverthread.start();
+        // check if webserver is running
+        // if not, stop the webserver
+        // runs a loop while the webserver thread is alive
+        // makes requests to the webserver until it dies (while the thread is listening for requests, it can't die and only checks if the server is running after a request)
+        // truly a hacky and awful way to do this, but it works
         Thread serverthread = new Thread(() -> {
-            while (true) {
+            while (webserverthread.isAlive()) {
                 if (!mcserveractive) {
                     sleep(2);
-                    for (int i = 0; i < 2; i++) {
-                        CUrl curl = new CUrl("http://localhost:" + WEB_PORT + "/api/v1/dummy").timeout(1, 1); // a truly awful way of stopping this thread
-                        curl.exec();
-                        sleep(1);
-                    }
+                    try {
+                        // Create URL
+                        URL url = new URL("http://localhost:" + WEB_PORT + "/api/v1/dummy");
+
+                        // Open connection
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                        // Set request method
+                        connection.setRequestMethod("GET");
+
+                        // Set connection timeout (milliseconds)
+                        connection.setConnectTimeout(1000);
+
+                        // Set read timeout (milliseconds)
+                        connection.setReadTimeout(1000);
+
+                        // Get response code (optional, but useful for debugging)
+                        int responseCode = connection.getResponseCode();
+                        System.out.println("Response Code: " + responseCode);
+
+                        // Close connection
+                        connection.disconnect();
+                    } catch (Exception ignored) {}
                     LOGGER.info("Webserver Stopped!");
                     break;
                 } else {
