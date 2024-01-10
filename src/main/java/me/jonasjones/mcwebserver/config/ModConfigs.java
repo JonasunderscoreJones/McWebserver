@@ -45,7 +45,7 @@ public class ModConfigs {
         config.addKeyValuePair(new Pair<>("web.api", true), "whether or not the webserver api should be enabled or not");
         config.addKeyValuePair(new Pair<>("web.api.adv", true), "whether or not the api should expose information such as player coordinates and inventory");
         config.addKeyValuePair(new Pair<>("web.file.notSupported", "not_supported.html"), "the name of the html file for 'not supported' page");
-        config.addKeyValuePair(new Pair<>("logger.verbose", true), "whether or not to log verbose output");
+        config.addKeyValuePair(new Pair<>("logger.verbose", false), "whether or not to log verbose output");
     }
 
     private static void assignConfigs() {
