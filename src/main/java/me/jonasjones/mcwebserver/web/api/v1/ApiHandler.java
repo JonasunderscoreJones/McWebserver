@@ -2,6 +2,8 @@ package me.jonasjones.mcwebserver.web.api.v1;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
+import static me.jonasjones.mcwebserver.McWebserver.MC_SERVER;
+
 public class ApiHandler {
 
     public static Boolean isApiRequest(String request) {
@@ -64,6 +66,7 @@ public class ApiHandler {
     public static void startHandler() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.isRunning()) {
+                MC_SERVER = server;
                 ApiRequestsUtil.setMOTD(server.getServerMotd());
                 ApiRequestsUtil.setSERVER_IP(server.getServerIp());
                 ApiRequestsUtil.setSERVER_PORT(server.getServerPort());
