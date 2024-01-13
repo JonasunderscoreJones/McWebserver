@@ -1,6 +1,7 @@
 package me.jonasjones.mcwebserver.web;
 
 import me.jonasjones.mcwebserver.config.ModConfigs;
+import me.jonasjones.mcwebserver.web.php.PhpServer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.net.HttpURLConnection;
@@ -75,11 +76,14 @@ public class ServerHandler implements Runnable {
     }
 
     public void run() {
-        if (ModConfigs.IS_ENABLED) {
+        if ((ModConfigs.IS_ENABLED && !ModConfigs.PHP_ENABLED)) {
             LOGGER.info("Starting Webserver...");
 
             new HttpServer(socket);
             HttpServer.main();
+        } else if (ModConfigs.PHP_ENABLED) {
+            LOGGER.info("Starting php Webserver...");
+            PhpServer.main();
         } else {
             LOGGER.info("Webserver disabled in the config file.");
         }
