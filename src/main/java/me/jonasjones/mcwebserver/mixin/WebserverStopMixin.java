@@ -3,6 +3,7 @@ package me.jonasjones.mcwebserver.mixin;
 import me.jonasjones.mcwebserver.McWebserver;
 import me.jonasjones.mcwebserver.config.ModConfigs;
 import me.jonasjones.mcwebserver.web.ServerHandler;
+import me.jonasjones.mcwebserver.web.php.PhpServer;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,5 +17,6 @@ public class WebserverStopMixin {
 		McWebserver.LOGGER.info("Stopping Webserver...");
 		ModConfigs.VERBOSE = false;
 		ServerHandler.mcserveractive = false;
+		PhpServer.stop();
 	}
 }
