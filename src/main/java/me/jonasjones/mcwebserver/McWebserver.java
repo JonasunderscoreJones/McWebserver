@@ -1,13 +1,13 @@
 package me.jonasjones.mcwebserver;
 
+import com.google.gson.Gson;
 import me.jonasjones.mcwebserver.config.ModConfigs;
-import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
+import me.jonasjones.mcwebserver.web.api.v1.ApiV1Handler;
 import me.jonasjones.mcwebserver.web.ServerHandler;
+import me.jonasjones.mcwebserver.web.api.v2.ApiV2Handler;
 import me.jonasjones.mcwebserver.web.api.v2.tokenmgr.Token;
-import me.jonasjones.mcwebserver.web.api.v2.tokenmgr.TokenManager;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,7 @@ public class McWebserver implements ModInitializer {
 	public static final Logger VERBOSELOGGER = LoggerFactory.getLogger(MOD_ID + " - VERBOSE LOGGER");
 	public static Boolean ISFIRSTSTART = false;
 	public static MinecraftServer MC_SERVER;
+	public static final Gson gson = new Gson();
 
 	@Override
 	public void onInitialize() {
@@ -41,16 +42,19 @@ public class McWebserver implements ModInitializer {
 		}
 
 		if (SERVER_API_ENABLED) {
-			if (API_INGAME_COMMAND_ENABLED) {
+			if (API_INGAME_COMMAND_ENABLED && ADV_API_ENABLED) {
 				ArrayList< Token > tokens = readOrCreateTokenFile();
 				LOGGER.info("Loaded " + tokens.size() + " tokens from file.");
 				// register commands
 				registerCommands();
+
+				// start advanced api handler
+				ApiV2Handler.startAdvHandler();
 			}
 
 
 			//start collecting api info
-			ApiHandler.startHandler();
+			ApiV1Handler.startHandler();
 			LOGGER.info("Server API enabled!");
 			/*if (ADV_API_ENABLED) {
 				//start collecting advanced api info

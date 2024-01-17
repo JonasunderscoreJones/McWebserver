@@ -1,12 +1,15 @@
 package me.jonasjones.mcwebserver.web.api.v1;
 
+import me.jonasjones.mcwebserver.web.api.ApiRequests;
+import me.jonasjones.mcwebserver.web.api.ApiRequestsUtil;
+import me.jonasjones.mcwebserver.web.api.ErrorHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 import static me.jonasjones.mcwebserver.McWebserver.MC_SERVER;
 
-public class ApiHandler {
+public class ApiV1Handler {
 
-    public static Boolean isApiRequest(String request) {
+    public static Boolean isApiV1Request(String request) {
         return request.startsWith("/api/v1/");
     }
     public static String handle(String request) {
@@ -58,7 +61,7 @@ public class ApiHandler {
                 return ApiRequests.serverGetAllRequest();
             }
             default -> {
-                return ApiRequests.badRequest();
+                return ErrorHandler.notFoundErrorString();
             }
         }
     }
@@ -77,25 +80,8 @@ public class ApiHandler {
                 ApiRequestsUtil.setMAX_PLAYER_COUNT(server.getMaxPlayerCount());
                 ApiRequestsUtil.setSERVER_METADATA(server.getServerMetadata());
                 ApiRequestsUtil.setTICKS(server.getTicks());
-                //ApiRequestsUtil.setTICK_TIME(server.getTickTime());
                 ApiRequestsUtil.setTIME_REFERENCE(server.getTimeReference());
             }
         });
     }
-
-    /*public static void startAdvHandler() {
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            if (server.isRunning()) {
-                ApiRequestsUtil.setSERVER_PLAYER_ENTITY_LIST(server.getPlayerManager().getPlayerList());
-                ApiRequestsUtil.setSERVER_RESOURCE_PACK_PROFILE_COLLECTION(server.getDataPackManager().getProfiles());
-                ApiRequestsUtil.setSERVER_ADVANCEMENT_COLLECTION(server.getAdvancementLoader().getAdvancements());
-                ApiRequestsUtil.setSERVER_BOSSBAR_COLLECTION(server.getBossBarManager().getAll());
-                ApiRequestsUtil.getSERVER_PLAYER_ENTITY_LIST().forEach(serverPlayerEntity -> {
-
-                });
-                //SERVER_PLAYER_ENTITY_LIST = server.getPlayerInteractionManager().getPlayerList();
-            }
-        });
-    }*/
-
 }

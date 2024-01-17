@@ -3,11 +3,12 @@ package me.jonasjones.mcwebserver.web;
 import me.jonasjones.mcwebserver.config.ModConfigs;
 import me.jonasjones.mcwebserver.McWebserver;
 import me.jonasjones.mcwebserver.util.VerboseLogger;
-import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
-import me.jonasjones.mcwebserver.web.api.v1.ApiRequests;
-import me.jonasjones.mcwebserver.web.api.v1.ApiRequestsUtil;
+import me.jonasjones.mcwebserver.web.api.ErrorHandler;
+import me.jonasjones.mcwebserver.web.api.v1.ApiV1Handler;
+import me.jonasjones.mcwebserver.web.api.ApiRequests;
+import me.jonasjones.mcwebserver.web.api.ApiRequestsUtil;
+import me.jonasjones.mcwebserver.web.api.v2.ApiV2Handler;
 
-import java.awt.desktop.SystemEventListener;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +26,8 @@ import java.time.Instant;
 import java.util.StringTokenizer;
 
 import static me.jonasjones.mcwebserver.web.ServerHandler.mcserveractive;
-import static me.jonasjones.mcwebserver.web.api.v1.ApiHandler.isApiRequest;
+import static me.jonasjones.mcwebserver.web.api.v1.ApiV1Handler.isApiV1Request;
+import static me.jonasjones.mcwebserver.web.api.v2.ApiV2Handler.isApiV2Request;
 
 public class HttpServer implements Runnable {
     static Path WEB_ROOT;
@@ -51,6 +53,7 @@ public class HttpServer implements Runnable {
     private final Socket connect;
     private final MimeTypeIdentifier mimetypeidentifier = new MimeTypeIdentifier();
     private Boolean isApiv1Request = false;
+    private Boolean isApiv2Request = false;
 
     static {
         try {
@@ -97,7 +100,7 @@ public class HttpServer implements Runnable {
             PrintWriter out = null;
             BufferedOutputStream dataOut = null;
             String fileRequested = null;
-            String apiToken;
+            String apiToken = null;
 
             try {
                 // we read characters from the client via input stream on the socket
@@ -113,15 +116,13 @@ public class HttpServer implements Runnable {
                 StringTokenizer parse = new StringTokenizer(input);
                 String method = parse.nextToken().toUpperCase(); // we get the HTTP method of the client
                 // we get file requested
-                fileRequested = parse.nextToken().toLowerCase();
+                fileRequested = parse.nextToken();
                 String header;
                 while ((header = in.readLine()) != null && !header.isEmpty()) {
 
                     // Check if the header contains your API token
                     if (header.startsWith("Authorization: Bearer ")) {
                         apiToken = header.substring("Authorization: Bearer ".length());
-                        System.out.println("API Token: " + apiToken);
-                        // Now you have the API token, you can use it for authentication.
                     }
                 }
 
@@ -147,7 +148,7 @@ public class HttpServer implements Runnable {
                     // file
                     dataOut.write(fileData, 0, fileData.length);
                     dataOut.flush();
-                } else if (isApiRequest(fileRequested)) {
+                } else if (isApiV1Request(fileRequested)) {
                     isApiv1Request = true;
                     // Check if server API is enabled
                     if (ModConfigs.SERVER_API_ENABLED) {
@@ -171,10 +172,10 @@ public class HttpServer implements Runnable {
                             String jsonString = "";
                             try {
                                 // Get JSON data from ApiHandler
-                                jsonString = ApiHandler.handle(fileRequested);
+                                jsonString = ApiV1Handler.handle(fileRequested);
                             } catch (Exception e) {
                                 VerboseLogger.error("Error getting JSON data from ApiHandler: " + e.getMessage());
-                                jsonString = ApiRequests.internalServerError();
+                                jsonString = ErrorHandler.internalServerErrorString();
                             }
 
 
@@ -190,7 +191,7 @@ public class HttpServer implements Runnable {
                         }
                     } else {
                         // Server API is disabled
-                        String jsonString = ApiRequests.forbiddenRequest();
+                        String jsonString = ErrorHandler.forbiddenRequestString();
                         byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
                         int contentLength = jsonBytes.length;
                         dataOut.write("HTTP/1.1 403 Forbidden\r\n".getBytes(StandardCharsets.UTF_8));
@@ -198,6 +199,32 @@ public class HttpServer implements Runnable {
                         dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
                         dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
                         dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+                        dataOut.write(jsonBytes, 0, contentLength);
+                        dataOut.flush();
+                    }
+                } else if (isApiV2Request(fileRequested)) {
+                    isApiv1Request = false;
+                    // Check if server API is enabled
+                    if (ModConfigs.SERVER_API_ENABLED) {
+                        dataOut.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                        String jsonString = "";
+                        try {
+                            // Get JSON data from ApiHandler
+                            jsonString = ApiV2Handler.handle(fileRequested, apiToken);
+                        } catch (Exception e) {
+                            VerboseLogger.error("Error getting JSON data from ApiHandler: " + e.getMessage());
+                            jsonString = ErrorHandler.internalServerErrorString();
+                        }
+
+                        byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                        int contentLength = jsonBytes.length;
+
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+
+                        // Send JSON data
                         dataOut.write(jsonBytes, 0, contentLength);
                         dataOut.flush();
                     }
@@ -247,9 +274,26 @@ public class HttpServer implements Runnable {
                 try {
                     assert out != null;
                     assert dataOut != null;
+                    VerboseLogger.error("Error with file not found exception : " + e.getMessage());
                     fileNotFound(out, dataOut, fileRequested);
                 } catch (IOException ioe) {
-                    VerboseLogger.error("Error with file not found exception : " + ioe.getMessage());
+                    // send json 404 error
+                    // replace mime type header with application/json
+                    try {
+                        dataOut = new BufferedOutputStream(connect.getOutputStream());
+                        dataOut.write("HTTP/1.1 404 Not Found\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                        String jsonString = ErrorHandler.internalServerErrorString();
+                        byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                        int contentLength = jsonBytes.length;
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+                        dataOut.write(jsonBytes, 0, contentLength);
+                        dataOut.flush();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
 
             } catch (IOException ioe) {

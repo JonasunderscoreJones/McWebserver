@@ -1,4 +1,4 @@
-package me.jonasjones.mcwebserver.web.api.v1.json;
+package me.jonasjones.mcwebserver.web.api.json;
 
 import lombok.Setter;
 

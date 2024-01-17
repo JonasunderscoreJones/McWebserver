@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +21,7 @@ public class TokenManager {
     @Getter
     private static ArrayList<Token> tokens = new ArrayList<>();
 
-    private static String hashString(String input) throws NoSuchAlgorithmException {
+    public static String hashString(String input) throws NoSuchAlgorithmException {
         try {
             // Create a MessageDigest instance for SHA-256
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -176,5 +177,20 @@ public class TokenManager {
             tokenNames[i] = tokens.get(i).getName();
         }
         return tokenNames;
+    }
+
+    public static Boolean isTokenValid(String token) throws NoSuchAlgorithmException {
+        tokens = readTokensFromFile();
+        for (Token tokenObj : tokens) {
+            if (tokenObj.getTokenHash().equals(hashString(token))) {
+                if (tokenObj.getExpires() == 0) {
+                    return true;
+                }
+                if (tokenObj.getExpires() > Instant.now().getEpochSecond()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
