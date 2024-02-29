@@ -7,7 +7,6 @@ import me.jonasjones.mcwebserver.web.api.v1.ApiHandler;
 import me.jonasjones.mcwebserver.web.api.v1.ApiRequests;
 import me.jonasjones.mcwebserver.web.api.v1.ApiRequestsUtil;
 
-import java.awt.desktop.SystemEventListener;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -203,43 +202,65 @@ public class HttpServer implements Runnable {
                     }
                 } else {
                     isApiv1Request = false;
-                    // GET or HEAD method
-                    if (fileRequested.endsWith("/")) {
-                        fileRequested += DEFAULT_FILE;
-                    }
-                    if (fileRequested.startsWith("/")) {
-                        fileRequested = fileRequested.substring(1);
+                    boolean passwdApproved = false;
+                    if (ModConfigs.WEB_PASSWORD.isEmpty()) {
+                        passwdApproved = true;
+                    } else if (fileRequested.endsWith("?auth=" + ModConfigs.WEB_PASSWORD)) {
+                        passwdApproved = true;
+                        fileRequested = fileRequested.replace("?auth=" + ModConfigs.WEB_PASSWORD, "");
                     }
 
-                    Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
-                    if (!file.startsWith(WEB_ROOT)) {
-                        VerboseLogger.warn("Access to file outside root: " + file);
-                        throw new NoSuchFileException(fileRequested);
-                    }
-                    int fileLength = (int) Files.size(file);
-                    int fileExtensionStartIndex = fileRequested.lastIndexOf(".") + 1;
-                    String contentType;
-                    if (fileExtensionStartIndex > 0) {
-                        contentType = mimetypeidentifier.compare(fileRequested.substring(fileExtensionStartIndex));
+                    if (passwdApproved) {
+                        // GET or HEAD method
+                        if (fileRequested.endsWith("/")) {
+                            fileRequested += DEFAULT_FILE;
+                        }
+                        if (fileRequested.startsWith("/")) {
+                            fileRequested = fileRequested.substring(1);
+                        }
+
+                        Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
+                        if (!file.startsWith(WEB_ROOT)) {
+                            VerboseLogger.warn("Access to file outside root: " + file);
+                            throw new NoSuchFileException(fileRequested);
+                        }
+                        int fileLength = (int) Files.size(file);
+                        int fileExtensionStartIndex = fileRequested.lastIndexOf(".") + 1;
+                        String contentType;
+                        if (fileExtensionStartIndex > 0) {
+                            contentType = mimetypeidentifier.compare(fileRequested.substring(fileExtensionStartIndex));
+                        } else {
+                            contentType = "text/plain";
+                        }
+
+                        byte[] fileData = readFileData(file);
+
+                        // send HTTP Headers
+                        dataOut.write(OK);
+                        dataOut.write(HEADERS);
+                        dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write(CRLF); // blank line between headers and content, very important !
+                        if (method.equals("GET")) { // GET method so we return content
+                            dataOut.write(fileData, 0, fileLength);
+                            dataOut.flush();
+                        }
+
+                        VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
                     } else {
-                        contentType = "text/plain";
-                    }
-
-                    byte[] fileData = readFileData(file);
-
-                    // send HTTP Headers
-                    dataOut.write(OK);
-                    dataOut.write(HEADERS);
-                    dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write(CRLF); // blank line between headers and content, very important !
-                    if (method.equals("GET")) { // GET method so we return content
-                        dataOut.write(fileData, 0, fileLength);
+                        String jsonString = ApiRequests.forbiddenRequest();
+                        byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                        int contentLength = jsonBytes.length;
+                        dataOut.write("HTTP/1.1 403 Forbidden\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                        dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                        dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+                        dataOut.write(jsonBytes, 0, contentLength);
                         dataOut.flush();
+                        VerboseLogger.info("File " + fileRequested + " not returned due to insufficient authentication");
                     }
-
-                    VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
 
                 }
 
