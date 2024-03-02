@@ -70,11 +70,22 @@ public class ApiV2Handler {
 
         if (isTokenValid) {
             request = request.replace("/api/v2/", "");
-            if (request.startsWith("playerinfo?playername=")) {
-                String playerName = request.replace("playerinfo?playername=", "");
-                return ApiRequests.playerInfoRequest(playerName);
-            } else if (request.startsWith("playerinfo?playeruuid=")) {
-                return ErrorHandler.badRequestString();
+            if (request.startsWith("playerlookup?uuid=")) {
+                return ApiRequests.playerLookupRequest(request.replace("playerlookup?uuid=", ""));
+            } else if (request.startsWith("playerinfo/inventory?uuid=")) {
+                String playerName = request.replace("playerinfo/inventory?uuid=", "");
+                //return ApiRequests.playerInfoRequest(playerName);
+                return ErrorHandler.internalServerErrorString();
+            } else if (request.startsWith("playerinfo/inventory?playeruuid=")) {
+                //return ApiRequests.playerInfoRequestFromUuid(request.replace("playerinfo/inventory?playeruuid=", ""));
+                return ErrorHandler.internalServerErrorString();
+            } else if (request.startsWith("playerinfo/enderchest?playername=")) {
+                String playerName = request.replace("playerinfo/enderchest?playername=", "");
+                //return ApiRequests.playerInfoRequest(playerName);
+                return ErrorHandler.internalServerErrorString();
+            } else if (request.startsWith("playerinfo/enderchest?playeruuid=")) {
+                //return ApiRequests.playerInfoRequestFromUuid(request.replace("playerinfo/enderchest?playeruuid=", ""));
+                return ErrorHandler.internalServerErrorString();
             } else {
                 return ErrorHandler.notFoundErrorString();
             }

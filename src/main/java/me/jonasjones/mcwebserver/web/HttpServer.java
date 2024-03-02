@@ -8,6 +8,7 @@ import me.jonasjones.mcwebserver.web.api.v1.ApiV1Handler;
 import me.jonasjones.mcwebserver.web.api.ApiRequests;
 import me.jonasjones.mcwebserver.web.api.ApiRequestsUtil;
 import me.jonasjones.mcwebserver.web.api.v2.ApiV2Handler;
+import me.jonasjones.mcwebserver.web.api.v2.tokenmgr.TokenManager;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.StringTokenizer;
 
@@ -121,8 +123,8 @@ public class HttpServer implements Runnable {
                 while ((header = in.readLine()) != null && !header.isEmpty()) {
 
                     // Check if the header contains your API token
-                    if (header.startsWith("Authorization: Bearer ")) {
-                        apiToken = header.substring("Authorization: Bearer ".length());
+                    if (header.startsWith("Authorization: Basic ")) {
+                        apiToken = header.substring("Authorization: Basic ".length());
                     }
                 }
 
@@ -238,35 +240,68 @@ public class HttpServer implements Runnable {
                         fileRequested = fileRequested.substring(1);
                     }
 
-                    Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
-                    if (!file.startsWith(WEB_ROOT)) {
-                        VerboseLogger.warn("Access to file outside root: " + file);
-                        throw new NoSuchFileException(fileRequested);
-                    }
-                    int fileLength = (int) Files.size(file);
-                    int fileExtensionStartIndex = fileRequested.lastIndexOf(".") + 1;
-                    String contentType;
-                    if (fileExtensionStartIndex > 0) {
-                        contentType = mimetypeidentifier.compare(fileRequested.substring(fileExtensionStartIndex));
-                    } else {
-                        contentType = "text/plain";
+                    try {
+                        boolean isAuthorized = false;
+                        if (!ModConfigs.WEB_REQUIRE_TOKEN) {
+                            isAuthorized = true;
+                        } else if (apiToken != null) {
+                            isAuthorized = TokenManager.isTokenValid(apiToken);
+                        }
+
+                        if (isAuthorized) {
+
+                            Path file = WEB_ROOT.resolve(fileRequested).toRealPath(LinkOption.NOFOLLOW_LINKS);
+                            if (!file.startsWith(WEB_ROOT)) {
+                                VerboseLogger.warn("Access to file outside root: " + file);
+                                throw new NoSuchFileException(fileRequested);
+                            }
+                            int fileLength = (int) Files.size(file);
+                            int fileExtensionStartIndex = fileRequested.lastIndexOf(".") + 1;
+                            String contentType;
+                            if (fileExtensionStartIndex > 0) {
+                                contentType = mimetypeidentifier.compare(fileRequested.substring(fileExtensionStartIndex));
+                            } else {
+                                contentType = "text/plain";
+                            }
+
+                            byte[] fileData = readFileData(file);
+
+                            // send HTTP Headers
+                            dataOut.write(OK);
+                            dataOut.write(HEADERS);
+                            dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                            dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
+                            dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
+                            dataOut.write(CRLF); // blank line between headers and content, very important !
+                            if (method.equals("GET")) { // GET method so we return content
+                                dataOut.write(fileData, 0, fileLength);
+                                dataOut.flush();
+                            }
+
+                            VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
+                        } else {
+                            dataOut.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
+                            dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+                            dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                            String jsonString = ErrorHandler.unauthorizedString();
+
+
+                            byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                            int contentLength = jsonBytes.length;
+
+                            dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                            dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+
+                            // Send JSON data
+                            dataOut.write(jsonBytes, 0, contentLength);
+                            dataOut.flush();
+                        }
+
+                    } catch (NoSuchAlgorithmException e) {
+                        McWebserver.LOGGER.error("Error getting JSON data from ApiHandler: " + e.getMessage());
                     }
 
-                    byte[] fileData = readFileData(file);
 
-                    // send HTTP Headers
-                    dataOut.write(OK);
-                    dataOut.write(HEADERS);
-                    dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write(CRLF); // blank line between headers and content, very important !
-                    if (method.equals("GET")) { // GET method so we return content
-                        dataOut.write(fileData, 0, fileLength);
-                        dataOut.flush();
-                    }
-
-                    VerboseLogger.info("File " + fileRequested + " of type " + contentType + " returned");
 
                 }
 

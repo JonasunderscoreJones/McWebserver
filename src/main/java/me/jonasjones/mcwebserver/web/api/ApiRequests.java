@@ -11,12 +11,16 @@ public class ApiRequests {
         return "[\"" + value + "\"]";
     }
 
+    public static String playerLookupRequest(String playerName) {
+        return gson.toJson(ApiRequestsUtil.playerLookup(playerName));
+    }
+
     public static String playerNamesRequest() {
         return gson.toJsonTree(ApiRequestsUtil.convertPlayerList(ApiRequestsUtil.getSERVER_METADATA().players().get().sample())).getAsJsonArray().toString();
     }
 
-    public static String playerInfoRequest(String playerName) {
-        return gson.toJson(ApiRequestsUtil.getPlayerInfo(playerName));
+    public static String playerInfoAllRequest(String playerUuid) {
+        return gson.toJson(ApiRequestsUtil.getPlayerInfo(playerUuid));
     }
 
     public static String serverMetadataRequest() {

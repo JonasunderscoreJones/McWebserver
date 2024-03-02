@@ -13,6 +13,14 @@ public class ErrorHandler {
         return gson.toJsonTree(badRequest()).getAsJsonObject().toString();
     }
 
+    public static Error unauthorized() {
+        return new Error(401, "Unauthorized");
+    }
+
+    public static String unauthorizedString() {
+        return gson.toJsonTree(unauthorized()).getAsJsonObject().toString();
+    }
+
     public static Error internalServerError() {
         return new Error(500, "Internal Server Error");
     }

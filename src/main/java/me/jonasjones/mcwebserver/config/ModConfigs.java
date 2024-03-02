@@ -15,6 +15,7 @@ public class ModConfigs {
     public static String WEB_ROOT;
     public static String WEB_FILE_ROOT;
     public static String WEB_FILE_404;
+    public static Boolean WEB_REQUIRE_TOKEN;
     public static Boolean SERVER_API_ENABLED;
     public static Boolean ADV_API_ENABLED;
     public static Boolean API_INGAME_COMMAND_ENABLED;
@@ -45,6 +46,7 @@ public class ModConfigs {
         config.addKeyValuePair(new Pair<>("web.root", "webserver/"), "the root directory of the webserver, starting from the main server directory");
         config.addKeyValuePair(new Pair<>("web.file.root", "index.html"), "the name of the html file for the homepage");
         config.addKeyValuePair(new Pair<>("web.file.404", "404.html"), "the name of the html file for 404 page");
+        config.addKeyValuePair(new Pair<>("web.require_token", false), "wether or not you are required to provide a token to access files on the webserver");
         config.addKeyValuePair(new Pair<>("web.api", true), "whether or not the webserver api should be enabled or not");
         config.addKeyValuePair(new Pair<>("web.api.adv", true), "whether or not the api should expose information such as player coordinates and inventory");
         config.addKeyValuePair(new Pair<>("web.api.cmd", true), "whether or not the ingame command to manage tokens should be enabled or not");
@@ -59,6 +61,7 @@ public class ModConfigs {
         WEB_ROOT = CONFIG.getOrDefault("web.root", "webserver/");
         WEB_FILE_ROOT = CONFIG.getOrDefault("web.file.root", "index.html");
         WEB_FILE_404 = CONFIG.getOrDefault("web.file.404", "404.html");
+        WEB_REQUIRE_TOKEN = CONFIG.getOrDefault("web.require_token", false);
         SERVER_API_ENABLED = CONFIG.getOrDefault("web.api", true);
         ADV_API_ENABLED = CONFIG.getOrDefault("web.api.adv", true);
         API_INGAME_COMMAND_ENABLED = CONFIG.getOrDefault("web.api.cmd", true);

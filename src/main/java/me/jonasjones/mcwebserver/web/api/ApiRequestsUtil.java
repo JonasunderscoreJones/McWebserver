@@ -124,9 +124,18 @@ public class ApiRequestsUtil {
         return ApiRequestsUtil.getSERVER_METADATA().favicon().get().iconBytes();
     }
 
-    public static JsonObject getPlayerInfo(String playerName) {
+    public static JsonObject playerLookup(String playerName) {
         for (ServerPlayerEntity player : ApiRequestsUtil.getSERVER_PLAYER_ENTITY_LIST()) {
             if (player.getName().getString().equals(playerName)) {
+                return JsonParser.parseString("{\"uuid\":\"" + player.getUuidAsString() + "\"}").getAsJsonObject();
+            }
+        }
+        return gson.toJsonTree(ErrorHandler.customError(404, "Player Not Found")).getAsJsonObject();
+    }
+
+    public static JsonObject getPlayerInfo(String uuid) {
+        for (ServerPlayerEntity player : ApiRequestsUtil.getSERVER_PLAYER_ENTITY_LIST()) {
+            if (player.getUuidAsString().equals(uuid)) {
                 try {
                     String sleepDirection = (player.getSleepingDirection() != null) ? player.getSleepingDirection().asString() : null;
                     Vec<Integer> sleepPosition = new Vec<>();
