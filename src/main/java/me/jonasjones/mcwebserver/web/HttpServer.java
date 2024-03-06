@@ -123,8 +123,8 @@ public class HttpServer implements Runnable {
                 while ((header = in.readLine()) != null && !header.isEmpty()) {
 
                     // Check if the header contains your API token
-                    if (header.startsWith("Authorization: Basic ")) {
-                        apiToken = header.substring("Authorization: Basic ".length());
+                    if (header.startsWith("Authorization: Bearer ")) {
+                        apiToken = header.substring("Authorization: Bearer ".length());
                     }
                 }
 
@@ -349,6 +349,10 @@ public class HttpServer implements Runnable {
 
         }
     }
+
+    /*private BufferedOutputStream responseConstructor(BufferedOutputStream dataOut, String content, String mimeType) {
+        dataOut.write()
+    }*/
 
     private byte[] readFileData(Path file) throws IOException {
         return Files.readAllBytes(file);
