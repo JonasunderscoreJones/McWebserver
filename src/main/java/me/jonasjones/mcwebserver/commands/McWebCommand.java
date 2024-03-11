@@ -30,28 +30,40 @@ public class McWebCommand {
                                                         .executes(context -> {
                                                             String name = StringArgumentType.getString(context, "Name");
                                                             String expires = StringArgumentType.getString(context, "Expiration Time (example: 1y3d4h -> 1 Year, 3 Days, 4 Hours)");
+                                                            if (context.getSource().isExecutedByPlayer()) {
                                                             String result = registerToken(name, expires);
-                                                            if (result.equals("exists")) {
-                                                                context.getSource().sendFeedback(() -> Text.of("A token with that name already exists"), false);
-                                                                return 0;
-                                                            } else if (result.equals("failed")) {
-                                                                context.getSource().sendFeedback(() -> Text.of("Failed to create token (Unknown Error)"), false);
-                                                                return 0;
-                                                            } else {
-                                                                context.getSource().sendFeedback(() -> Text.of("Token Created!\nExpires " + convertToHumanReadable(convertExpirationDate(expires))), true);
-                                                                if (MC_SERVER != null) {
-                                                                    // get the player name
-                                                                    String playerName = Objects.requireNonNull(context.getSource().getPlayer()).getName().getString();
-                                                                    MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token (will only show once): \",\"\\n\",\"[\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
-                                                                    return 1;
+                                                                if (result.equals("exists")) {
+                                                                    context.getSource().sendFeedback(() -> Text.of("A token with that name already exists"), false);
+                                                                    return 0;
+                                                                } else if (result.equals("failed")) {
+                                                                    context.getSource().sendFeedback(() -> Text.of("Failed to create token (Unknown Error)"), false);
+                                                                    return 0;
+                                                                } else {
+                                                                    context.getSource().sendFeedback(() -> Text.of("Token Created! - Expires " + convertToHumanReadable(convertExpirationDate(expires))), true);
+                                                                    if (MC_SERVER != null) {
+                                                                        if (context.getSource().isExecutedByPlayer()) {
+                                                                            // get the player name
+                                                                            String playerName = Objects.requireNonNull(context.getSource().getPlayer()).getName().getString();
+                                                                            MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token (will only show once): \",\"\\n\",\"[\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
+                                                                        }
+                                                                        return 1;
+                                                                    }
+                                                                    context.getSource().sendFeedback(() -> Text.of("Failed to create token (Unknown Error)"), false);
+                                                                    return 0;
                                                                 }
-                                                                context.getSource().sendFeedback(() -> Text.of("Failed to create token (Unknown Error)"), false);
+                                                            } else {
+                                                                context.getSource().sendFeedback(() -> Text.of("ERROR: Due to Security concerns it is not possible to generate tokens from the server console as they are saved in server logs. Tokens must be created by a player! (more info at: https://wiki.jonasjones.dev/McWebserver/Tokens)"), false);
                                                                 return 0;
                                                             }
                                                         }))))
                                 .then(literal("list")
                                         .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.of(listTokens()), false);
+                                            try {
+                                                context.getSource().sendFeedback(() -> Text.of(listTokens()), false);
+                                                return 1;
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                             return 1;
                                         }))
                                 .then(literal("delete")
