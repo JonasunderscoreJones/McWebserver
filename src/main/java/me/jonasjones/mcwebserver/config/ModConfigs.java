@@ -19,7 +19,6 @@ public class ModConfigs {
     public static Boolean SERVER_API_ENABLED;
     public static Boolean ADV_API_ENABLED;
     public static Boolean API_INGAME_COMMAND_ENABLED;
-    public static String WEB_FILE_NOSUPPORT;
 
     public static Boolean PHP_ENABLED;
     public static Boolean VERBOSE = false; //needs to be set to false since the verbose logger is called before config file is fully loaded
@@ -50,7 +49,6 @@ public class ModConfigs {
         config.addKeyValuePair(new Pair<>("web.api", true), "whether or not the webserver api should be enabled or not");
         config.addKeyValuePair(new Pair<>("web.api.adv", true), "whether or not the api should expose information such as player coordinates and inventory");
         config.addKeyValuePair(new Pair<>("web.api.cmd", true), "whether or not the ingame command to manage tokens should be enabled or not");
-        config.addKeyValuePair(new Pair<>("web.file.notSupported", "not_supported.html"), "the name of the html file for 'not supported' page");
         config.addKeyValuePair(new Pair<>("logger.verbose", false), "whether or not to log verbose output");
         config.addKeyValuePair(new Pair<>("web.php", false), "enable php");
     }
@@ -65,7 +63,6 @@ public class ModConfigs {
         SERVER_API_ENABLED = CONFIG.getOrDefault("web.api", true);
         ADV_API_ENABLED = CONFIG.getOrDefault("web.api.adv", true);
         API_INGAME_COMMAND_ENABLED = CONFIG.getOrDefault("web.api.cmd", true);
-        WEB_FILE_NOSUPPORT = CONFIG.getOrDefault("web.file.notSupported", "not_supported.html");
         VERBOSE = CONFIG.getOrDefault("logger.verbose", true);
         PHP_ENABLED = CONFIG.getOrDefault("web.php", false);
     }

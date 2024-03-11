@@ -45,6 +45,14 @@ public class ErrorHandler {
         return gson.toJsonTree(notFoundError()).getAsJsonObject().toString();
     }
 
+    public static Error notImplementedError() {
+        return new Error(501, "Not Implemented");
+    }
+
+    public static String notImplementedErrorString() {
+        return gson.toJsonTree(notImplementedError()).getAsJsonObject().toString();
+    }
+
     public static Error customError(int status, String message) {
         return new Error(status, message);
     }

@@ -36,11 +36,8 @@ public class HttpServer implements Runnable {
     static Path WEB_ROOT;
     static final String DEFAULT_FILE = ModConfigs.WEB_FILE_ROOT;
     static final String FILE_NOT_FOUND = ModConfigs.WEB_FILE_404;
-    static final String METHOD_NOT_SUPPORTED = ModConfigs.WEB_FILE_NOSUPPORT;
     // port to listen connection
     static final int PORT = ModConfigs.WEB_PORT;
-
-    private static final byte[] NOT_IMPLEMENTED = "HTTP/1.1 405 Method Not Allowed\r\n".getBytes(StandardCharsets.UTF_8);
     private static final byte[] OK = "HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8);
     private static final byte[] NOT_FOUND = "HTTP/1.1 404 Not Found\r\n".getBytes(StandardCharsets.UTF_8);
     private static final byte[] HEADERS = String.join(
@@ -132,24 +129,17 @@ public class HttpServer implements Runnable {
                 // we support only GET and HEAD methods, we check
                 if (!method.equals("GET") && !method.equals("HEAD")) {
                     isApiv1Request = false;
-                    VerboseLogger.info("501 Not Implemented : " + method + " method.");
+                    VerboseLogger.error("501 Not Implemented : " + method + " method.");
 
-                    // we return the not supported file to the client
-                    Path file = WEB_ROOT.resolve(METHOD_NOT_SUPPORTED);
-                    long fileLength = Files.size(file);
-                    String contentMimeType = "text/html";
-                    //read content to return to client
-                    byte[] fileData = readFileData(file);
-
-                    // we send HTTP Headers with data to client
-                    dataOut.write(NOT_IMPLEMENTED);
-                    dataOut.write(HEADERS); //hopefully enough credits
+                    dataOut.write("HTTP/1.1 501 Not Implemented\r\n".getBytes(StandardCharsets.UTF_8));
                     dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Type: %s\r\n".formatted(contentMimeType).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-                    dataOut.write(CRLF); // blank line between headers and content, very important !
-                    // file
-                    dataOut.write(fileData, 0, fileData.length);
+                    dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+                    String jsonString = ErrorHandler.notImplementedErrorString();
+                    byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                    int contentLength = jsonBytes.length;
+                    dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+                    dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+                    dataOut.write(jsonBytes, 0, contentLength);
                     dataOut.flush();
                 } else if (isApiV1Request(fileRequested)) {
                     isApiv1Request = true;

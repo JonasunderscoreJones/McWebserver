@@ -101,10 +101,8 @@ public class ServerHandler implements Runnable {
         Path path = FabricLoader.getInstance().getGameDir();
         Path webroot = path.resolve(ModConfigs.WEB_ROOT);
         Path index = webroot.resolve(ModConfigs.WEB_FILE_ROOT);
-        Path notsupported = webroot.resolve(ModConfigs.WEB_FILE_NOSUPPORT);
         Path notfound = webroot.resolve(ModConfigs.WEB_FILE_404);
         index.toFile().mkdirs();
-        notsupported.toFile().mkdirs();
         notfound.toFile().mkdirs();
     }
 }
