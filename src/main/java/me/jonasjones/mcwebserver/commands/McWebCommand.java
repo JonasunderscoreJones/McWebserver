@@ -21,7 +21,7 @@ import static net.minecraft.server.command.CommandManager.*;
 
 public class McWebCommand {
     public static void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("mcweb")
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("mcweb").requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                         .then(literal("token")
                                 .then(literal("new")
                                         .then(CommandManager.argument("Name", StringArgumentType.word())
@@ -44,7 +44,7 @@ public class McWebCommand {
                                                                         if (context.getSource().isExecutedByPlayer()) {
                                                                             // get the player name
                                                                             String playerName = Objects.requireNonNull(context.getSource().getPlayer()).getName().getString();
-                                                                            MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token (will only show once): \",\"\\n\",\"[\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
+                                                                            MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token: [\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"" + result + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
                                                                         }
                                                                         return 1;
                                                                     }
@@ -58,12 +58,7 @@ public class McWebCommand {
                                                         }))))
                                 .then(literal("list")
                                         .executes(context -> {
-                                            try {
-                                                context.getSource().sendFeedback(() -> Text.of(listTokens()), false);
-                                                return 1;
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+                                            context.getSource().sendFeedback(() -> Text.of(listTokens()), false);
                                             return 1;
                                         }))
                                 .then(literal("delete")
