@@ -359,22 +359,38 @@ public class HttpServer implements Runnable {
     }
 
     private void fileNotFound(PrintWriter out, OutputStream dataOut, String fileRequested) throws IOException {
-        Path file = WEB_ROOT.resolve(FILE_NOT_FOUND);
-        int fileLength = (int) Files.size(file);
-        String contentType = "text/html";
-        byte[] fileData = readFileData(file);
+        try {
+            Path file = WEB_ROOT.resolve(FILE_NOT_FOUND);
+            int fileLength = (int) Files.size(file);
+            String contentType = "text/html";
+            byte[] fileData = readFileData(file);
 
-        dataOut.write(NOT_FOUND);
-        dataOut.write(HEADERS);
-        dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
-        dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
-        dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
-        dataOut.write(CRLF); // blank line between headers and content, very important !
-        out.flush(); // flush character output stream buffer
+            dataOut.write(NOT_FOUND);
+            dataOut.write(HEADERS);
+            dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+            dataOut.write("Content-Type: %s\r\n".formatted(contentType).getBytes(StandardCharsets.UTF_8));
+            dataOut.write("Content-Length: %s\r\n".formatted(fileLength).getBytes(StandardCharsets.UTF_8));
+            dataOut.write(CRLF); // blank line between headers and content, very important !
+            out.flush(); // flush character output stream buffer
 
-        dataOut.write(fileData, 0, fileLength);
-        dataOut.flush();
+            dataOut.write(fileData, 0, fileLength);
+            dataOut.flush();
 
-        VerboseLogger.error("File " + fileRequested + " not found");
+            VerboseLogger.error("File " + fileRequested + " not found");
+        } catch (Exception e) {
+            VerboseLogger.error("Error with file not found exception : " + e.getMessage());
+            dataOut.write("HTTP/1.1 404 Not Found\r\n".getBytes(StandardCharsets.UTF_8));
+            dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
+            dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
+            String jsonString = ErrorHandler.notFoundErrorString();
+            byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+            int contentLength = jsonBytes.length;
+            dataOut.write(("Content-Length: " + contentLength + "\r\n").getBytes(StandardCharsets.UTF_8));
+            dataOut.write("\r\n".getBytes(StandardCharsets.UTF_8)); // Blank line before content
+            dataOut.write(jsonBytes, 0, contentLength);
+            dataOut.flush();
+
+            VerboseLogger.error("File " + fileRequested + " not found");
+        }
     }
 }
