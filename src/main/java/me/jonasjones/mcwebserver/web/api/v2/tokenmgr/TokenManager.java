@@ -140,10 +140,34 @@ public class TokenManager {
         if (tokens.size() == 0) {
             return "No active tokens.";
         }
-        sb.append("Active Tokens:\n");
-        sb.append("Name | Expiration Date | Beginning of Token value\n");
+        int longestName = 0;
+        int longestExpires = 0;
         for (Token token : tokens) {
-            sb.append(token.getName()).append(" | ").append(convertToHumanReadable(token.getExpires())).append(" | ").append(token.getTokenStart()).append("...").append("\n");
+            if (token.getName().length() > longestName) {
+                longestName = token.getName().length();
+            }
+            if (convertToHumanReadable(token.getExpires()).length() > longestExpires) {
+                longestExpires = convertToHumanReadable(token.getExpires()).length();
+            }
+        }
+        sb.append("Active Tokens:\n");
+        sb.append("Name")
+                .append(" ".repeat(Math.max(longestName - 4, 0)))
+                .append(" | ").append("Expires")
+                .append(" ".repeat(Math.max(longestExpires - 6, 0)))
+                .append(" | TokenStart\n");
+        sb.append("-".repeat(Math.max(longestName, 4)))
+                .append(" | ")
+                .append("-".repeat(Math.max(longestExpires, 7)))
+                .append(" | ")
+                .append("-".repeat(10))
+                .append("\n");
+        for (Token token : tokens) {
+            String humanExpires = convertToHumanReadable(token.getExpires());
+            sb.append(token.getName())
+                    .append(" ".repeat(Math.max(longestName - token.getName().length(), 4 - token.getName().length())))
+                    .append(" | ").append(humanExpires).append(" ".repeat(Math.max(longestExpires - humanExpires.length(), 7 - humanExpires.length())))
+                    .append(" | ").append(token.getTokenStart()).append("...").append("\n");
         }
         return sb.toString();
     }
