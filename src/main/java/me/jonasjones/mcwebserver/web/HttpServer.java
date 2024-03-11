@@ -25,6 +25,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import static me.jonasjones.mcwebserver.web.ServerHandler.mcserveractive;
@@ -379,6 +380,9 @@ public class HttpServer implements Runnable {
             VerboseLogger.error("File " + fileRequested + " not found");
         } catch (Exception e) {
             VerboseLogger.error("Error with file not found exception : " + e.getMessage());
+            if (Objects.equals(e.getMessage(), WEB_ROOT.resolve(FILE_NOT_FOUND).toString())) {
+                VerboseLogger.error("Couldn't find fallback 404 file. Sending JSON 404 error.");
+            }
             dataOut.write("HTTP/1.1 404 Not Found\r\n".getBytes(StandardCharsets.UTF_8));
             dataOut.write("Date: %s\r\n".formatted(Instant.now()).getBytes(StandardCharsets.UTF_8));
             dataOut.write("Content-Type: application/json\r\n".getBytes(StandardCharsets.UTF_8));
