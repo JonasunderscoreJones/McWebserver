@@ -42,7 +42,7 @@ public class McWebCommand {
                                                                 if (MC_SERVER != null) {
                                                                     // get the player name
                                                                     String playerName = Objects.requireNonNull(context.getSource().getPlayer()).getName().getString();
-                                                                    MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token (will only show once): \",\"\\n\",\"[\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
+                                                                    MC_SERVER.getCommandManager().executeWithPrefix(MC_SERVER.getCommandSource(), "tellraw " + playerName + " [\"\",\"Token: [\",{\"text\":\"" + result + "\",\"color\":\"green\",\"clickEvent\":{\"action\":\"copy_to_clipboard\",\"value\":\"" + result + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":[\"Click to Copy to Clipboard\"]}},\"]\"]");
                                                                     return 1;
                                                                 }
                                                                 context.getSource().sendFeedback(() -> Text.of("Failed to create token (Unknown Error)"), false);
